@@ -5,6 +5,7 @@ import { Configuration, OpenAIApi } from "openai";
 function App() {
   const [prompt, setPrompt] = useState("");
   const [result, setResult] = useState("");
+  const [search, setSearch] = useState(false);
 
   const configuration = new Configuration({
     apiKey: import.meta.env.VITE_Open_AI_Key,
@@ -13,12 +14,18 @@ function App() {
   const openai = new OpenAIApi(configuration);
 
   const generateImage = async () => {
-    const res = await openai.createImage({
-      prompt,
-      n: 1,
-      size: "1024x1024",
-    });
-    setResult(res.data.data[0].url);
+     try {
+      const res = await openai.createImage({
+        prompt,
+        n: 1,
+        size: "1024x1024",
+      });
+      setResult(res.data.data[0].url);
+      setSearch(false);
+     } catch (error) {
+      window.alert("Something wrong... don't worry");
+      setSearch(false);
+     }
   };
 
   return (
@@ -30,12 +37,17 @@ function App() {
         className="app-input"
         onChange={(e) => setPrompt(e.target.value)}
       />
-      <button onClick={generateImage}>Generate an image</button>
+      <button onClick= {(e) => {
+        setSearch(true);
+        generateImage();
+        }}>Generate an image</button>
 
       {result.length > 0 ? (
-        <img class="resultImage" src={result || ""} alt="result" />
+        <img className="resultImage" src={result || ""} alt="result" />
       ) : (
-        <></>
+        <>{
+          prompt.length > 0 && result.length === 0 && search? <p style={{marginTop: '10px'}}>loading... ⏳</p> : <></>
+        }</>
       )}
     </div>
   );
