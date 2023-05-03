@@ -23,7 +23,7 @@ function App() {
       setResult(res.data.data[0].url);
       setSearch(false);
      } catch (error) {
-      window.alert("Something wrong... don't worry about it");
+      window.alert("Something wrong... don't worry about it😁");
       setSearch(false);
      }
   };
